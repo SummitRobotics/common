@@ -14,19 +14,10 @@ import com.summitrobotics.common.swerve.Swerve;
 
 public class SwerveArcade extends CommandBase {
     Swerve drivetrain;
-    PrioritizedAxis fwd;
-    PrioritizedAxis str;
-    PrioritizedAxis rcw;
-
-    PrioritizedTrigger resetPose;
-    PrioritizedTrigger flipMode;
-    PrioritizedTrigger rotaTrigger;
-
-    RisingEdgeTrigger flipModeRisingEdge;
-    RisingEdgeTrigger resetPoseRisingEdge;
-
-    SlewRateLimiter fwdLimiter;
-    SlewRateLimiter strLimiter;
+    PrioritizedAxis fwd, str, rcw;
+    PrioritizedTrigger resetPose, flipMode, rotaTrigger;
+    RisingEdgeTrigger flipModeRisingEdge, resetPoseRisingEdge;
+    SlewRateLimiter fwdLimiter, strLimiter;
 
     final double MAX_SPEED;
     boolean fieldOriented = false;
