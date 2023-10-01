@@ -1,7 +1,6 @@
 package com.summitrobotics.common.swerve;
 
 import java.security.InvalidParameterException;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -33,15 +32,20 @@ public class SwerveConstellation implements Sendable {
         kinematicsConstraint = new SwerveDriveKinematicsConstraint(kinematics, MAX_SPEED_METERS_PER_SECOND);
     }
 
-    protected void setModuleStates(ChassisSpeeds speeds, Translation2d centerOfRotation) {
+    public void setModuleStates(ChassisSpeeds speeds, Translation2d centerOfRotation) {
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds, centerOfRotation);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_SPEED_METERS_PER_SECOND);
         SwerveModule.setModuleStates(states, modules);
     }
 
-    protected void setModuleStates(ChassisSpeeds speeds) {
+    public void setModuleStates(ChassisSpeeds speeds) {
         setModuleStates(speeds, new Translation2d());
     }
+
+    public void setModuleStates(SwerveModuleState[] states) {
+        SwerveModule.setModuleStates(states, modules);
+    }
+
     protected void stopModules() {
         if (stopStates == null) {
             stopStates = new SwerveModuleState[modules.length];
