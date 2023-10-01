@@ -108,6 +108,10 @@ public class SwerveModule implements Sendable {
         return new SwerveModuleState(speedSupplier.get(), angleSupplier.get());
     }
 
+    public SwerveModuleState getTargetState() {
+        return targetState;
+    }
+
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(distanceSupplier.get(), angleSupplier.get());
     }
