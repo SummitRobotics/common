@@ -20,7 +20,7 @@ public class SwerveArcade extends CommandBase {
     SlewRateLimiter fwdLimiter, strLimiter;
 
     final double MAX_SPEED;
-    boolean fieldOriented = false;
+    boolean fieldOriented = true;
 
     public SwerveArcade(Swerve drivetrain, OIAxis fwd, OIAxis str, OIAxis rcw, OITrigger resetPose, OITrigger flipMode, OITrigger rotateTrigger) {
         this.drivetrain = drivetrain;
@@ -60,12 +60,13 @@ public class SwerveArcade extends CommandBase {
         }
 
         ChassisSpeeds speed = new ChassisSpeeds(
+            -strLimiter.calculate(-str.get() * MAX_SPEED / 4),
             -fwdLimiter.calculate(fwd.get() * MAX_SPEED / 4),
-            -strLimiter.calculate(str.get() * MAX_SPEED / 4),
             -turnVal / 10
         );
         if (fieldOriented) {
             speed = ChassisSpeeds.fromFieldRelativeSpeeds(speed, drivetrain.getPose().getRotation());
+            System.out.println("Rotation: " + drivetrain.getPose().getRotation());
         }
         if (rotaTrigger.getTrigger().getAsBoolean()) {
             System.out.println("HERE");

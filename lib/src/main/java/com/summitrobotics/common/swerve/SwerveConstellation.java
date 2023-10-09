@@ -23,7 +23,7 @@ public class SwerveConstellation implements Sendable {
         this.modules = modules;
         this.kinematics = SwerveModule.computeKinematics(modules);
 
-        double minMax = Double.MAX_VALUE;
+        double minMax = Double.MAX_VALUE * 2;
         for (SwerveModule module : modules) {
             minMax = Math.min(minMax, module.MAX_SPEED_METERS_PER_SECOND); 
         }

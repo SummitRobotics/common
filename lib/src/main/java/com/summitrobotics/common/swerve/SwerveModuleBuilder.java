@@ -19,7 +19,7 @@ public class SwerveModuleBuilder {
 
     public static enum SWERVE_MODULE_PRESETS {
         SDS_MK4i_L1(8.14, 150.0/7.0, Units.inchesToMeters(4), new double[]{0.0, 0.0, 0.0}, 0.533333333333),
-        SDS_MK4i_L2(6.75, 150.0/7.0, Units.inchesToMeters(4), new double[]{1, 0, 0.005}, 0.533333333333),
+        SDS_MK4i_L2(6.75, 150.0/7.0, Units.inchesToMeters(4), new double[]{0.25, 0, 0.005}, 0.533333333333),
         SDS_MK4i_L3(6.12, 150.0/7.0, Units.inchesToMeters(4), new double[]{0.0, 0.0, 0.0}, 0.533333333333);
 
         public final double driveGearRatio;
@@ -274,7 +274,7 @@ public class SwerveModuleBuilder {
                 // System.out.println(angleSpeedSupplier.get().getDegrees());
                 if (Math.abs(error) > Math.toRadians(0.5)) {
                     // System.out.println(String.format("AbsEnc: %.2f, Enc: %.2f", turnEncoderAbsolute.get(), encoder.getPosition()));
-                    System.out.println("RECAL");
+                    // System.out.println("RECAL");
                     double setAngle = Math.toDegrees(turnEncoderAbsolute.get());
 
                     // Sets the encoder position to one that it is close to.
@@ -301,7 +301,7 @@ public class SwerveModuleBuilder {
             throw new IllegalStateException("Turn motor has not been set");
         }
 
-        maxSpeedMPS = (driveMotorMaxRPM * WheelDiameter * Math.PI) / (driveGearRatio * 60);
+        maxSpeedMPS = (driveMotorMaxRPM * WheelDiameter * Math.PI) * 2 / (driveGearRatio * 60);
 
         built = true;
 
