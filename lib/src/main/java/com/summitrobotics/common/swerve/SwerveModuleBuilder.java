@@ -301,7 +301,7 @@ public class SwerveModuleBuilder {
             throw new IllegalStateException("Turn motor has not been set");
         }
 
-        maxSpeedMPS = (driveMotorMaxRPM * WheelDiameter * Math.PI) * 2 / (driveGearRatio * 60);
+        maxSpeedMPS = (driveMotorMaxRPM * WheelDiameter * Math.PI) * 2 / (driveGearRatio * 60) * 4;
 
         built = true;
 
