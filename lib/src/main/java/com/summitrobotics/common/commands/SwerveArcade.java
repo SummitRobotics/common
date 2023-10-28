@@ -2,9 +2,11 @@ package com.summitrobotics.common.commands;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import com.kauailabs.navx.frc.AHRS;
 import com.summitrobotics.common.oi.inputs.OIAxis;
 import com.summitrobotics.common.oi.inputs.OITrigger;
 import com.summitrobotics.common.oi.inputs.RisingEdgeTrigger;
@@ -14,6 +16,7 @@ import com.summitrobotics.common.swerve.Swerve;
 
 public class SwerveArcade extends CommandBase {
     Swerve drivetrain;
+    AHRS gyro;
     PrioritizedAxis fwd, str, rcw;
     PrioritizedTrigger resetPose, flipMode, rotaTrigger;
     RisingEdgeTrigger flipModeRisingEdge, resetPoseRisingEdge;
@@ -22,8 +25,9 @@ public class SwerveArcade extends CommandBase {
     final double MAX_SPEED;
     boolean fieldOriented = true;
 
-    public SwerveArcade(Swerve drivetrain, OIAxis fwd, OIAxis str, OIAxis rcw, OITrigger resetPose, OITrigger flipMode, OITrigger rotateTrigger) {
+    public SwerveArcade(Swerve drivetrain, AHRS gyro, OIAxis fwd, OIAxis str, OIAxis rcw, OITrigger resetPose, OITrigger flipMode, OITrigger rotateTrigger) {
         this.drivetrain = drivetrain;
+        this.gyro = gyro;
         this.fwd = fwd.prioritize(0);
         this.str = str.prioritize(0);
         this.rcw = rcw.prioritize(0);
@@ -49,6 +53,11 @@ public class SwerveArcade extends CommandBase {
         }
         if (resetPoseRisingEdge.get()) {
             drivetrain.setPose(new Pose2d());
+            gyro.calibrate();
+            gyro.reset();
+            gyro.setAngleAdjustment(180);
+            // Sets drivetrain back to 0, reducing acumulated error
+            drivetrain.setPose(new Pose2d(0, 0, new Rotation2d(Math.PI)));
         }
 
         double turnVal = 0;
