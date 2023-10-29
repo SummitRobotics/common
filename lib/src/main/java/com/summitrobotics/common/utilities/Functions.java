@@ -57,7 +57,7 @@ public class Functions {
      * @return if the value is within the range
      */
     public static boolean isWithin(double toCompare, double target, double error) {
-        return Math.abs(toCompare - target) <= (error / 2);
+        return Math.abs(toCompare - target) <= error;
     }
 
     /**

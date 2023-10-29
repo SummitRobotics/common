@@ -44,6 +44,7 @@ public class SwerveArcade extends CommandBase {
 
         addRequirements(drivetrain);
         MAX_SPEED = drivetrain.getConstellation().MAX_SPEED_METERS_PER_SECOND;
+        addRequirements(drivetrain);
     }
 
     @Override

@@ -240,9 +240,10 @@ public class SwerveModuleBuilder {
             encoder.setVelocityConversionFactor((2 * Math.PI) / (turnGearRatio)); // TODO Check to make sure this is accurate
             angleSupplier = () -> {
                 double angle = encoder.getPosition() % (2 * Math.PI);
-                angle = (angle + (2 * Math.PI)) % (2 * Math.PI);
                 if (angle > Math.PI) {
                     angle -= 2 * Math.PI;
+                } else if (angle < -Math.PI) {
+                    angle += 2 * Math.PI;
                 }
                 return new Rotation2d(angle);
             };

@@ -10,7 +10,7 @@ import java.util.function.DoubleSupplier;
  */
 public class OIAxis {
 
-    private static final double DEFAULT_DEADZONE = 0.08;
+    private static final double DEFAULT_DEADZONE = 0.04;
 
     protected DoubleSupplier getter;
     protected double deadzone;
