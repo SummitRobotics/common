@@ -313,4 +313,7 @@ gradle-app.setting
 
 *.wpilog
 
+### GVersion BuildConstants file ###
+lib/src/main/java/com/summitrobotics/common/BuildConstants.java
+
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,eclipse,intellij+all,visualstudiocode
