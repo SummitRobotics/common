@@ -21,7 +21,7 @@ public class FollowPathPlannerTrajectory extends SequentialCommandGroup {
             new InstantCommand(() -> {
               if (resetPose) {
                 if (allianceMirror) {
-                    drivetrain.setPose(PathPlannerTrajectory.transformTrajectoryForAlliance(traj, DriverStation.getAlliance()).getInitialPose());
+                    drivetrain.setPose(PathPlannerTrajectory.transformTrajectoryForAlliance(traj, DriverStation.getAlliance().get()).getInitialPose());
                 } else {
                     drivetrain.setPose(traj.getInitialPose());
                 }
