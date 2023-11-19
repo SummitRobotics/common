@@ -72,7 +72,7 @@ public class SwerveArcade extends CommandBase {
         ChassisSpeeds speed = new ChassisSpeeds(
             -strLimiter.calculate(-str.get() * MAX_SPEED / 4),
             -fwdLimiter.calculate(fwd.get() * MAX_SPEED / 4),
-            -turnVal / 10
+            -turnVal * 10
         );
         if (fieldOriented) {
             speed = ChassisSpeeds.fromFieldRelativeSpeeds(speed, drivetrain.getPose().getRotation());
