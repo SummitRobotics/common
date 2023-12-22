@@ -5,7 +5,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.summitrobotics.common.swerve.Swerve;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -30,14 +30,13 @@ public class FollowPathPlannerTrajectory extends SequentialCommandGroup {
             new PPSwerveControllerCommand(
                 traj,
                 drivetrain::getPose,
-                drivetrain.getConstellation().kinematics,
                 new PIDController(drivePID[0], drivePID[1], drivePID[2]), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
                 new PIDController(drivePID[0], drivePID[1], drivePID[2]), // Y controller (usually the same values as X controller)
                 new PIDController(rotationPID[0], rotationPID[1], rotationPID[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-                new Consumer<SwerveModuleState[]>() {
+                new Consumer<ChassisSpeeds>() {
                     @Override
-                    public void accept(SwerveModuleState[] states) {
-                        drivetrain.getConstellation().setModuleStates(states);
+                    public void accept(ChassisSpeeds speeds) {
+                        drivetrain.drive(speeds);
                     }
                 },
                 allianceMirror, // Should the path be automatically mirrored depending on alliance color? Optional, defaults to true

@@ -84,7 +84,7 @@ public abstract class Swerve extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Odometry X", () -> getPose().getX(), null);
         builder.addDoubleProperty("Odometry Y", () -> getPose().getY(), null);
-        builder.addDoubleProperty("Odometry Heading (Deg)", () -> getPose().getRotation().getDegrees(), null);
+        builder.addDoubleProperty("Odometry Heading (Rads)", () -> getPose().getRotation().getRadians(), null);
         builder.addDoubleProperty("Velocity X", () -> getCurrentVelocity().vxMetersPerSecond, null);
         builder.addDoubleProperty("Velocity Y", () -> getCurrentVelocity().vyMetersPerSecond, null);
         builder.addDoubleProperty("Velocity Heading (Deg)", () -> getCurrentVelocity().omegaRadiansPerSecond * 180 / Math.PI, null);
