@@ -61,6 +61,14 @@ public class SwerveModuleBuilder {
 
     private boolean built = false; // If the module has been built
 
+    // The CANCoder angle is a discontinuous angle; PID controllers don't like the sudden jump between 0 and 360.
+    // Both angleConsumer and recalibrate convert to the version of that angle within 180 of the current position.
+    // Formula to eliminate jumps: (integer number of 360s to produce something close to the current angle) * 360 + (smallest representation of current angle)
+    // TODO - check this conversion
+    private double makeAngleContinuous(double current, double target) {
+        return Math.round((current - target % (2 * Math.PI)) / (2 * Math.PI)) * 2 * Math.PI + target % (2 * Math.PI);
+    }
+
     public SwerveModuleBuilder() {}
     public SwerveModuleBuilder(Translation2d location) {
         this.location = location;
@@ -119,6 +127,13 @@ public class SwerveModuleBuilder {
         this.turnD = turnD;
         return this;
     }
+    public SwerveModuleBuilder turnPID(double[] pid) {
+        if (pid.length != 3) return this;
+        this.turnP = pid[0];
+        this.turnI = pid[1];
+        this.turnD = pid[2];
+        return this;
+    }
     public SwerveModuleBuilder driveNEO1650(int deviceID) {
         this.sparkMaxDriveMotor = new CANSparkMax(deviceID, CANSparkMax.MotorType.kBrushless);
         this.driveMotorMaxRPM = 5_676;
@@ -153,7 +168,8 @@ public class SwerveModuleBuilder {
     public SwerveModuleBuilder CANCoder(int deviceID, double offset) {
         CANCoder canCoder = new CANCoder(deviceID);
         canCoder.configFactoryDefault();
-        canCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+        // Keep things simple with only positive values, although -180 to 180 might also work.
+        canCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360); 
         canCoder.configMagnetOffset(Math.toDegrees(offset));
         this.turnEncoderAbsolute = () -> {
             return Math.toRadians(canCoder.getAbsolutePosition());
@@ -256,42 +272,10 @@ public class SwerveModuleBuilder {
             pidController.setD(turnD, 0);
             pidController.setFeedbackDevice(encoder);
             angleConsumer = (Rotation2d angle) -> {
-                double angleRads = angle.getRadians();
-                // Convert angleRads to be between 0 and 2PI
-                angleRads = (angleRads + (2 * Math.PI)) % (2 * Math.PI);
-                double numRots = Math.floor(Math.abs(encoder.getPosition() / (2 * Math.PI))) * Math.signum(encoder.getPosition());
-                double setRads = angleRads + (numRots * (2 * Math.PI));
-
-                pidController.setReference(setRads, ControlType.kPosition, 0, turnFeedforward.calculate(setRads));
+                double reference = makeAngleContinuous(encoder.getPosition(), angle.getRadians());
+                pidController.setReference(reference, ControlType.kPosition, 0, turnFeedforward.calculate(reference));
             };
-            // Only recalibrate if the error is more than 0.5 degree on either side
-            recalibrate = () -> {
-                // Convert the continus 360 to a +-180.
-                double encoderAngle = Math.toDegrees(encoder.getPosition()) % 360;
-                encoderAngle = (encoderAngle + 360) % 360;
-                if (encoderAngle > 180) encoderAngle -= 360;
-
-                double error = turnEncoderAbsolute.get() - Math.toRadians(encoderAngle);
-                // System.out.println(angleSpeedSupplier.get().getDegrees());
-                if (Math.abs(error) > Math.toRadians(0.5)) {
-                    // System.out.println(String.format("AbsEnc: %.2f, Enc: %.2f", turnEncoderAbsolute.get(), encoder.getPosition()));
-                    // System.out.println("RECAL");
-                    double setAngle = Math.toDegrees(turnEncoderAbsolute.get());
-
-                    // Sets the encoder position to one that it is close to.
-                    // Only does this if the error is small because it might mess things up at startup.
-                    if (Math.abs(error) < Math.toRadians(20)) {
-                        // Convert Setangle to 0 to 360
-                        setAngle = (setAngle + 360) % 360;
-                        double currentPos = Math.toDegrees(encoder.getPosition());
-                        double numRots = Math.floor(Math.abs(currentPos / 360)) * Math.signum(currentPos);
-                        setAngle += numRots * 360;
-                    }
-
-                    // I did all my math in degrees to convert back to radians.
-                    encoder.setPosition(Math.toRadians(setAngle));
-                }
-            };
+            recalibrate = () -> { encoder.setPosition(makeAngleContinuous(encoder.getPosition(), turnEncoderAbsolute.get())); };
         } else if (falconTurnMotor != null) {
             // TODO
             angleSupplier = null;
