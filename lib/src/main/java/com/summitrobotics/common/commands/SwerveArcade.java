@@ -76,10 +76,10 @@ public class SwerveArcade extends CommandBase {
         );
         if (fieldOriented) {
             speed = ChassisSpeeds.fromFieldRelativeSpeeds(speed, drivetrain.getPose().getRotation());
-            System.out.println("Rotation: " + drivetrain.getPose().getRotation());
+            // System.out.println("Rotation: " + drivetrain.getPose().getRotation());
         }
         if (rotaTrigger.getTrigger().getAsBoolean()) {
-            System.out.println("HERE");
+            // System.out.println("HERE");
             drivetrain.drive(speed, new Translation2d(3, 0));
         } else {
             drivetrain.drive(speed);
