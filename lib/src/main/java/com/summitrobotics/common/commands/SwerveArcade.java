@@ -51,12 +51,12 @@ public class SwerveArcade extends CommandBase {
     public void execute() {
         if (flipModeRisingEdge.get()) {
             fieldOriented = !fieldOriented;
+            drivetrain.setFieldOriented(fieldOriented);
         }
         if (resetPoseRisingEdge.get()) {
             drivetrain.setPose(new Pose2d());
             gyro.calibrate();
             gyro.reset();
-            gyro.setAngleAdjustment(180);
             // Sets drivetrain back to 0, reducing acumulated error
             drivetrain.setPose(new Pose2d(0, 0, new Rotation2d(Math.PI)));
         }
@@ -70,9 +70,9 @@ public class SwerveArcade extends CommandBase {
         }
 
         ChassisSpeeds speed = new ChassisSpeeds(
-            -strLimiter.calculate(-str.get() * MAX_SPEED / 4),
-            -fwdLimiter.calculate(fwd.get() * MAX_SPEED / 4),
-            -turnVal * 10
+            fwdLimiter.calculate(fwd.get() * MAX_SPEED / 4),
+            strLimiter.calculate(str.get() * MAX_SPEED / 4),
+            turnVal * 10
         );
         if (fieldOriented) {
             speed = ChassisSpeeds.fromFieldRelativeSpeeds(speed, drivetrain.getPose().getRotation());
